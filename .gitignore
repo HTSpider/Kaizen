@@ -1,0 +1,9 @@
+# Installed and built things
+node_modules/
+desktop/app/
+mobile/www/
+*.apk
+
+# Your own data: the database, photos and logs
+data/
+*.log

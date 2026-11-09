@@ -1,0 +1,32 @@
+{
+  "name": "kaizen-mobile",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "bundle": "esbuild src/native.js --bundle --format=esm --target=es2020 --external:fs --external:path --external:crypto --outfile=../web/native.bundle.js",
+    "copy": "node copy-web.mjs",
+    "build": "npm run bundle && npm run copy && npx cap sync android"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.6.0",
+    "@capacitor-mlkit/barcode-scanning": "^8.2.2",
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capgo/capacitor-health": "^8.12.0",
+    "@capgo/capacitor-updater": "^8.54.2",
+    "sql.js": "^1.13.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  },
+  "private": true
+}

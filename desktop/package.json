@@ -1,0 +1,15 @@
+{
+  "name": "kaizen-desktop",
+  "version": "1.0.0",
+  "description": "Kaizen on the PC: opens the app window and keeps the server running for the phone.",
+  "main": "main.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "make-app": "electron tools/make-app.cjs"
+  },
+  "allowScripts": { "electron@38.4.0": true },
+  "dependencies": { "electron": "38.4.0" },
+  "devDependencies": { "rcedit": "4.0.1" }
+}

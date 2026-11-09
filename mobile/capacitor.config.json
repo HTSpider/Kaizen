@@ -1,0 +1,17 @@
+{
+  "appId": "com.kaizen.fitness",
+  "appName": "Kaizen",
+  "webDir": "www",
+  "server": { "androidScheme": "http", "cleartext": true },
+  "android": { "allowMixedContent": true },
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "httpsOnly": false,
+      "statsUrl": "",
+      "updateUrl": "",
+      "channelUrl": "",
+      "appReadyTimeout": 10000
+    }
+  }
+}

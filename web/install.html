@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#121417">
+<title>Install Kaizen</title>
+<style>
+  body { margin: 0; background: #121417; color: #F2F4F5; font: 16px/1.5 Inter, system-ui, sans-serif; }
+  main { max-width: 480px; margin: 0 auto; padding: 32px 20px; display: flex; flex-direction: column; gap: 16px; }
+  h1 { font-size: 30px; margin: 0; }
+  .btn { display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 18px; background: #C6F36B; color: #121417; font-weight: 700; font-size: 17px; text-decoration: none; }
+  .card { background: #1C1F24; border-radius: 20px; padding: 18px; }
+  ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+  b { color: #C6F36B; font-weight: 600; }
+  .muted { color: #9AA3AD; font-size: 14px; }
+  code { background: #2A2F36; padding: 2px 6px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Install Kaizen</h1>
+  <a class="btn" href="/kaizen.apk" download="kaizen.apk">Download the app</a>
+  <div class="card">
+    <ol>
+      <li>Tap <b>Download the app</b>. Chrome may show a blank grey page. That's normal: the file downloads in the background (about 38 MB).</li>
+      <li>If Chrome asks <b>"Download anyway?"</b> or warns the file may be harmful, tap <b>Download</b>. The warning appears for any app that isn't from the Play Store.</li>
+      <li>When it finishes, tap <b>Open</b> in the bar at the bottom. If you missed it, pull down your notifications and tap <b>kaizen.apk</b>, or open Chrome's <b>⋮</b> menu → <b>Downloads</b>.</li>
+      <li>Allow installs from Chrome if Android asks, then tap <b>Install</b>. If Play Protect warns about an unknown app, tap <b>More details</b>, then <b>Install anyway</b>.</li>
+      <li>Open <b>Kaizen</b> from your app drawer and enter:<br>address <code id="addr"></code><br>and the pair code shown in Kaizen on your PC under Settings → Phone.</li>
+    </ol>
+  </div>
+  <p class="muted">After this one install, Kaizen updates itself whenever you open it on your home Wi-Fi.</p>
+</main>
+<script>document.getElementById('addr').textContent = location.origin;</script>
+</body>
+</html>
