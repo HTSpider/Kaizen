@@ -303,7 +303,7 @@ function pairPage() {
     <div class="page-head"><h1 class="page-title">Connect to your PC</h1></div>
     <div class="card">
       <span class="subtle">Open Kaizen on your PC, go to Settings, and copy the ${A.isNative ? 'address and pair code' : 'pair code'} shown under Phone.</span>
-      ${A.isNative ? `<label class="field"><span>PC address</span><input id="purl" placeholder="http://192.168.0.10:5177" value="${esc(A.serverUrl())}" inputmode="url" autocapitalize="off"></label>` : ''}
+      ${A.isNative ? `<label class="field"><span>PC address</span><input id="purl" placeholder="http://192.168.1.x:5177" value="${esc(A.serverUrl())}" inputmode="url" autocapitalize="off"></label>` : ''}
       <label class="field"><span>Pair code</span><input id="pkey" value="${esc(A.pairKey())}" autocapitalize="off" autocomplete="off"></label>
       <button class="btn primary big" id="pgo">Connect</button>
       <span id="pmsg" class="subtle" role="status" style="min-height:20px"></span>

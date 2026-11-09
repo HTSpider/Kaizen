@@ -52,11 +52,20 @@ The Android app reads Health Connect and keeps its own copy of your data.
 
 Screen changes reach the phone over your home Wi-Fi, so you only need to rebuild the APK after changing native code.
 
-## Syncing between devices
+## Your own integrations
 
-When the PC and phone are on the same Wi-Fi, they sync directly. To sync from anywhere, link both to a free
-[Supabase](https://supabase.com) project in Settings. Kaizen shows the SQL to create its one table. Everything is
-end-to-end encrypted before it leaves your device, so Supabase only ever sees scrambled data.
+Everything is set up in **Settings** and saved in your own database (`data\`), which is never uploaded. Nothing
+here is required: Kaizen works on its own, and each integration adds to it.
+
+| What | What it adds | How to set it up |
+|---|---|---|
+| **Your details** | Calorie and protein targets | Settings: sex, birth year, height, goal weight, activity and pace. Or set calories yourself. |
+| **Claude** (AI coach) | Questions about your progress, and the Sunday check-in | Either install [Claude Code](https://claude.com/claude-code) on the PC and sign in to your Claude plan, or paste a Claude API key from [console.anthropic.com](https://console.anthropic.com) into Settings. The phone uses the PC's coach when they're on the same Wi-Fi. |
+| **Health Connect** | Steps, sleep, heart rate, workouts and weigh-ins from your watch, scale and other apps | Install the phone app, then allow Health Connect in Settings on the phone. Apps like Fitbit, Pixel Watch, Samsung Health and VeSync (Etekcity scales) need their own Health Connect sharing turned on. |
+| **Your PC and phone** | The same data on both | On the phone: Settings > Link with your PC, then scan the QR code shown in the PC's Settings (or paste the code). |
+| **Supabase** (optional) | Syncing when the phone isn't on your home Wi-Fi | Make a free project at [supabase.com](https://supabase.com), run the SQL Kaizen shows in Settings, then paste the Project URL and publishable key. Everything is encrypted on your device first, so Supabase only sees scrambled data. |
+| **Hevy** | Sets and reps from your workouts | Free Hevy: export a CSV from the Hevy app and use Train > Import from Hevy. Hevy Pro: paste your API key from hevy.com > Settings > Developer, and workouts come in by themselves. |
+| **Food** | Food search and barcodes | Built in, using Open Food Facts and a USDA food list. No account needed. |
 
 ## Folders
 
