@@ -2,6 +2,7 @@
 // (the server keeps running after you close the window, so your phone can still sync).
 import { app, BrowserWindow, shell, nativeImage } from 'electron';
 import { spawn } from 'node:child_process';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -21,9 +22,26 @@ async function serverUp() {
 
 async function ensureServer() {
   if (await serverUp()) return true;
-  // Start it detached and hidden, so it outlives this window
-  spawn('wscript.exe', [path.join(ROOT, 'kaizen-server.vbs')], { detached: true, stdio: 'ignore', windowsHide: true }).unref();
-  for (let i = 0; i < 40; i++) { await sleep(250); if (await serverUp()) return true; }
+  // Start node straight from here (detached and hidden, so it outlives this window), output into data\server.log.
+  // Going through wscript + kaizen-server.vbs sometimes started nothing at all, without a word in the log.
+  const dataDir = path.join(ROOT, 'data');
+  fs.mkdirSync(dataDir, { recursive: true });
+  const logPath = path.join(dataDir, 'server.log');
+  const log = fs.openSync(logPath, 'a');
+  const start = (cmd, env) => new Promise(resolve => {
+    const child = spawn(cmd, ['index.js'], { cwd: path.join(ROOT, 'server'), detached: true, stdio: ['ignore', log, log], windowsHide: true, env });
+    child.once('error', err => { fs.appendFileSync(logPath, `${new Date().toISOString()} couldn't start ${cmd}: ${err.message}\n`); resolve(false); });
+    child.once('spawn', () => { child.unref(); resolve(true); });
+  });
+  // The PC's own Node first; Kaizen.exe itself (Electron can run as Node) if that isn't there.
+  const { ELECTRON_RUN_AS_NODE, ...plain } = process.env;
+  const ok = await start('node', plain)
+    || await start(path.join(process.env.ProgramFiles || 'C:\\Program Files', 'nodejs', 'node.exe'), plain)
+    || await start(process.execPath, { ...plain, ELECTRON_RUN_AS_NODE: '1' });
+  fs.closeSync(log);
+  if (!ok) return false;
+  // Up to 30 s: right after Windows starts, everything is slow.
+  for (let i = 0; i < 120; i++) { await sleep(250); if (await serverUp()) return true; }
   return false;
 }
 

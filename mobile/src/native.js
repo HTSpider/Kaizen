@@ -133,6 +133,8 @@ async function sync(manual = false) {
     LS.set('kz_hc_last', String(Date.now()));
     if (manual) toast(`Synced · ${res.steps} days of steps, ${res.sleep} nights, ${res.weight} new weigh-ins`);
     await K.refresh({ auto: true });
+    // Send it to the PC straight away (not 15 s later or when the app closes), so the PC has it as soon as it opens.
+    await cloudSync();
   } catch (e) {
     if (manual) toast(e.queued ? 'Saved, will sync when your PC is reachable' : `Sync failed: ${e.message}`);
   } finally { syncing = false; }
@@ -248,6 +250,7 @@ export const native = {
     A.setLocal({ handle: Local.handle, chat: Local.chat });
     // Confirms this bundle works; otherwise the updater rolls back to the last good one
     CapacitorUpdater.notifyAppReady().catch(() => {});
+    // Opening the app: read Health Connect, then upload everything (sync() uploads once it has read).
     setTimeout(() => { cloudSync().then(() => sync()); checkForUpdate(); }, 300);
     checkAvailable();
     document.addEventListener('visibilitychange', () => {

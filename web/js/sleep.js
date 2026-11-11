@@ -2,6 +2,7 @@ import { esc, icon, fmtDur, bars, clock, niceDate, toast, openSheet, closeSheet,
 import * as A from './api.js';
 
 let range = 14;
+let picked = null; // the night being looked at (its date); null = the latest
 const STAGE = {
   awake: { label: 'Awake', color: 'var(--carbs)', row: 0, typical: 'Brief wake-ups are normal; under 10% of the night is typical.' },
   rem: { label: 'REM', color: 'var(--rem)', row: 1, typical: 'Typically 20–25%. Dreaming sleep that helps memory and mood.' },
@@ -89,7 +90,11 @@ export function mount(view, K) {
   const draw = data => {
     const goalMin = (data?.goal_h || 8) * 60;
     const nights = (data?.nights || []).filter(n => n.minutes > 0);
-    const last = nights[nights.length - 1];
+    // Back and forward go through the nights that have sleep in them.
+    let at = picked ? nights.findIndex(n => n.date === picked) : -1;
+    if (at < 0) at = nights.length - 1;
+    const last = nights[at];
+    const nightLabel = last ? (last.date === localDate() ? 'Last night' : niceDate(last.date)) : '';
     const recent = nights.slice(-range);
     const sc = score(last, goalMin);
     const debt = nights.slice(-7).reduce((a, n) => a + Math.max(0, goalMin - n.minutes), 0);
@@ -109,15 +114,21 @@ export function mount(view, K) {
 
     view.innerHTML = `
     <div class="page">
-      <div class="page-head"><h1 class="page-title">Sleep</h1><button class="btn" data-act="manual">Add manually</button></div>
+      <div class="page-head" style="padding-left:0;padding-right:0">
+        <button class="icon-btn" data-act="prev" aria-label="Previous night" ${at <= 0 ? 'disabled style="opacity:.35"' : ''}>${icon('left', 18, 2.2)}</button>
+        <div class="stack" style="gap:2px;align-items:center">
+          <h1 class="page-title" style="font-size:22px">Sleep</h1>
+          ${last ? `<span class="subtle">${nightLabel}</span>` : ''}
+        </div>
+        <button class="icon-btn" data-act="next" aria-label="Next night" ${at >= nights.length - 1 ? 'disabled style="opacity:.35"' : ''}>${icon('right', 18, 2.2)}</button>
+      </div>
       ${!last ? `<div class="card"><span style="font-weight:600">No sleep data yet</span>
-</div>` : `
+        <div><button class="btn" data-act="manual">Add manually</button></div></div>` : `
       <div class="wide-2">
         <div class="col">
           <div class="card big">
             <div class="between" style="align-items:flex-start">
               <div class="stack" style="gap:2px">
-                <span class="label">${last.date === localDate() ? 'Last night' : niceDate(last.date)}</span>
                 <span class="num-xl">${fmtDur(last.minutes)}</span>
                 <span class="subtle">${last.start && last.end ? `${clock(last.start)} – ${clock(last.end)}` : 'Asleep'}${inBed ? ` · ${fmtDur(inBed)} in bed` : ''}</span>
               </div>
@@ -140,6 +151,7 @@ export function mount(view, K) {
                 <div class="bar"><i style="width:${Math.min(100, pct * 2)}%;background:${STAGE[k].color}"></i></div></div>`;
             }).join('')}
           </div>` : ''}
+          <div><button class="btn" data-act="manual">Add manually</button></div>
         </div>
         <div class="col">
           <div class="grid2">
@@ -173,6 +185,16 @@ export function mount(view, K) {
   view.onclick = e => {
     const r = e.target.closest('[data-range]');
     if (r) { range = Number(r.dataset.range); draw(A.cached(path)); return; }
+    const step = e.target.closest('[data-act=prev], [data-act=next]');
+    if (step && !step.disabled) {
+      const nights = (A.cached(path)?.nights || []).filter(n => n.minutes > 0);
+      let at = picked ? nights.findIndex(n => n.date === picked) : -1;
+      if (at < 0) at = nights.length - 1;
+      at = Math.max(0, Math.min(nights.length - 1, at + (step.dataset.act === 'prev' ? -1 : 1)));
+      picked = at === nights.length - 1 ? null : nights[at]?.date ?? null;
+      draw(A.cached(path));
+      return;
+    }
     if (e.target.closest('[data-act=manual]')) {
       openSheet(`<h2>Add sleep</h2>
         <label class="field"><span>Morning you woke up</span><input id="sd" type="date" value="${localDate()}" max="${localDate()}"></label>

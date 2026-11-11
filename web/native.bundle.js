@@ -38016,6 +38016,7 @@ async function sync(manual = false) {
     LS.set("kz_hc_last", String(Date.now()));
     if (manual) toast(`Synced \xB7 ${res.steps} days of steps, ${res.sleep} nights, ${res.weight} new weigh-ins`);
     await K.refresh({ auto: true });
+    await cloudSync();
   } catch (e) {
     if (manual) toast(e.queued ? "Saved, will sync when your PC is reachable" : `Sync failed: ${e.message}`);
   } finally {

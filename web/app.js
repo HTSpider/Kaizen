@@ -129,7 +129,15 @@ async function start() {
     if (localDate() !== lastDay) { lastDay = localDate(); K.date = lastDay; }
     if (!sheetOpen() && document.visibilityState === 'visible' && K.tab !== 'coach') K.refresh({ auto: true });
   };
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') tick(); });
+  // PC: coming back to the window pulls the phone's latest health data too (at most once a minute).
+  let lastPull = Date.now();
+  const pull = async () => {
+    if (A.isNative || !A.isConfigured() || Date.now() - lastPull < 60000) return;
+    lastPull = Date.now();
+    try { const r = await A.post('/api/sync/now', {}, { queue: false }); if (r?.pulled && !sheetOpen()) K.refresh({ auto: true }); } catch {}
+  };
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { tick(); pull(); } });
+  window.addEventListener('focus', pull);
   setInterval(tick, 60000);
 }
 
